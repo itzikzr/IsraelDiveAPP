@@ -232,6 +232,12 @@ body {
   color: #fff; display: flex; align-items: center; justify-content: center;
   font-size: 20px; backdrop-filter: blur(4px); line-height: 1;
 }
+.thumb-photo, .hero-photo, .region-photo {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; opacity: 0; transition: opacity 0.5s;
+}
+.hero-photo { z-index: 0; }
+.thumb-photo { z-index: 0; }
 
 .site-stats-bar {
   display: flex; gap: 0; background: var(--surf-1);
@@ -377,6 +383,7 @@ body {
 
   <div id="view-site" class="view">
     <div class="site-hero" id="site-hero">
+      <img id="site-hero-img" class="hero-photo" loading="lazy" alt="">
       <button class="site-hero-back" onclick="goRegion()" aria-label="חזרה">›</button>
       <div class="site-hero-overlay"></div>
       <div class="bubbles" id="hero-bubbles"></div>
@@ -392,10 +399,10 @@ body {
 
 <script>
 const REGIONS = [
-  { id:'eilat', name:'אילת — ים סוף', tag:'דרום', desc:'שוניות האלמוגים הצפוניות בעולם', gradient:'radial-gradient(ellipse at 30% 40%, rgba(0,200,180,0.5) 0%, transparent 55%), linear-gradient(140deg, #006B8A 0%, #00A090 55%, #006B60 100%)' },
-  { id:'north', name:'צפון — ים תיכון', tag:'צפון', desc:'קניונות, מערות, אוניות מלחמה', gradient:'radial-gradient(ellipse at 70% 30%, rgba(40,100,180,0.5) 0%, transparent 55%), linear-gradient(140deg, #1A3A60 0%, #0D2240 55%, #091830 100%)' },
-  { id:'center', name:'מרכז — ים תיכון', tag:'מרכז', desc:'ארכיאולוגיה, ספינות וכרישים', gradient:'radial-gradient(ellipse at 40% 60%, rgba(60,120,200,0.4) 0%, transparent 55%), linear-gradient(140deg, #1E3A5A 0%, #102233 55%, #071520 100%)' },
-  { id:'deadsea', name:'ים המלח', tag:'מיוחד', desc:'הנמוך ביותר על פני כדור הארץ', gradient:'radial-gradient(ellipse at 50% 40%, rgba(180,210,240,0.5) 0%, transparent 55%), linear-gradient(140deg, #889AB0 0%, #667080 55%, #445060 100%)' },
+  { id:'eilat', name:'אילת — ים סוף', tag:'דרום', desc:'שוניות האלמוגים הצפוניות בעולם', gradient:'radial-gradient(ellipse at 30% 40%, rgba(0,200,180,0.5) 0%, transparent 55%), linear-gradient(140deg, #006B8A 0%, #00A090 55%, #006B60 100%)', photo:'https://upload.wikimedia.org/wikipedia/commons/8/8b/Gulf_of_Eilat_%28Red_Sea%29_coral_reefs.jpg' },
+  { id:'north', name:'צפון — ים תיכון', tag:'צפון', desc:'קניונות, מערות, אוניות מלחמה', gradient:'radial-gradient(ellipse at 70% 30%, rgba(40,100,180,0.5) 0%, transparent 55%), linear-gradient(140deg, #1A3A60 0%, #0D2240 55%, #091830 100%)', photo:'https://upload.wikimedia.org/wikipedia/commons/5/54/Air_bubble_in_underwater_cave_Cala_sa_Nau.JPG' },
+  { id:'center', name:'מרכז — ים תיכון', tag:'מרכז', desc:'ארכיאולוגיה, ספינות וכרישים', gradient:'radial-gradient(ellipse at 40% 60%, rgba(60,120,200,0.4) 0%, transparent 55%), linear-gradient(140deg, #1E3A5A 0%, #102233 55%, #071520 100%)', photo:'https://upload.wikimedia.org/wikipedia/commons/3/31/Wreck_diving_Zenobia%2C_Cyprus_%2841852450170%29.jpg' },
+  { id:'deadsea', name:'ים המלח', tag:'מיוחד', desc:'הנמוך ביותר על פני כדור הארץ', gradient:'radial-gradient(ellipse at 50% 40%, rgba(180,210,240,0.5) 0%, transparent 55%), linear-gradient(140deg, #889AB0 0%, #667080 55%, #445060 100%)', photo:'https://commons.wikimedia.org/wiki/Special:FilePath/Dead_Sea%2C_stones_covered_by_salt.JPG' },
 ];
 
 const SITES = [
@@ -568,6 +575,43 @@ const SITES = [
     entry:'חוף עין בוקק. מדריך מוסמך ים-המלח בלבד.', entryType:'חוף (מיוחד)', notes:'ציוד מיוחד: מסכה פנים מלאה + 30-40 ק"ג משקולות. מדריך מוסמך חובה.', season:'ספטמבר — יוני' },
 ];
 
+const W = 'https://upload.wikimedia.org/wikipedia/commons/';
+const PHOTOS = {
+  e01: W+'8/8b/Gulf_of_Eilat_%28Red_Sea%29_coral_reefs.jpg',
+  e02: W+'9/96/EilatFringingReef.jpg',
+  e03: W+'f/ff/Eilat_Coral_World_Underwater_Observatory_17.jpg',
+  e04: W+'5/54/Air_bubble_in_underwater_cave_Cala_sa_Nau.JPG',
+  e05: W+'8/88/Eilat_Coral_World_Underwater_Observatory_08.jpg',
+  e06: W+'9/99/Eilat_Coral_World_Underwater_Observatory_25.jpg',
+  e07: W+'3/31/Wreck_diving_Zenobia%2C_Cyprus_%2841852450170%29.jpg',
+  e08: W+'8/8d/USS_Oriskany_Ship_Wreck_Artificial_Reef_Dive_Underwater.jpg',
+  e09: W+'4/4d/Eilat_Dolphin_Reef_%283%29.jpg',
+  e10: W+'7/71/Eilat_Coral_World_Underwater_Observatory_01.jpg',
+  e11: W+'d/d6/Diving_into_the_wreck_of_the_Zenobia%2C_Cyprus_%2842757489815%29.jpg',
+  e12: W+'9/96/Snuba_divers_underwater.JPG',
+  e13: W+'9/96/EilatFringingReef.jpg',
+  e14: W+'f/ff/Eilat_Coral_World_Underwater_Observatory_17.jpg',
+  e15: W+'8/8d/USS_Oriskany_Ship_Wreck_Artificial_Reef_Dive_Underwater.jpg',
+  e16: W+'3/33/PikiWiki_Israel_15808_Diving_in_Yam_Sof.jpg',
+  n01: W+'5/54/Air_bubble_in_underwater_cave_Cala_sa_Nau.JPG',
+  n02: W+'d/d6/Diving_into_the_wreck_of_the_Zenobia%2C_Cyprus_%2842757489815%29.jpg',
+  n03: W+'3/31/Wreck_diving_Zenobia%2C_Cyprus_%2841852450170%29.jpg',
+  n04: W+'8/8d/USS_Oriskany_Ship_Wreck_Artificial_Reef_Dive_Underwater.jpg',
+  n05: W+'5/54/Air_bubble_in_underwater_cave_Cala_sa_Nau.JPG',
+  n06: W+'3/31/Wreck_diving_Zenobia%2C_Cyprus_%2841852450170%29.jpg',
+  n07: W+'9/96/Snuba_divers_underwater.JPG',
+  n08: W+'8/8d/USS_Oriskany_Ship_Wreck_Artificial_Reef_Dive_Underwater.jpg',
+  n09: W+'5/54/Air_bubble_in_underwater_cave_Cala_sa_Nau.JPG',
+  c01: W+'f/ff/Eilat_Coral_World_Underwater_Observatory_17.jpg',
+  c02: W+'6/6d/Carcharhinus_plumbeus.jpg',
+  c03: W+'d/d6/Diving_into_the_wreck_of_the_Zenobia%2C_Cyprus_%2842757489815%29.jpg',
+  c04: W+'5/54/Air_bubble_in_underwater_cave_Cala_sa_Nau.JPG',
+  c05: W+'3/31/Wreck_diving_Zenobia%2C_Cyprus_%2841852450170%29.jpg',
+  c06: W+'d/d6/Diving_into_the_wreck_of_the_Zenobia%2C_Cyprus_%2842757489815%29.jpg',
+  c07: W+'8/8d/USS_Oriskany_Ship_Wreck_Artificial_Reef_Dive_Underwater.jpg',
+  d01: 'https://commons.wikimedia.org/wiki/Special:FilePath/Dead_Sea%2C_stones_covered_by_salt.JPG',
+};
+
 const TYPE_LABELS = { reef:'שונית', wreck:'ספינה', cave:'מערה', canyon:'קניון', archaeological:'ארכיאולוגי', dolphins:'דולפינים', sharks:'כרישים', salt:'ים מלח' };
 const DIFF_LABELS = { beginner:'מתחיל', intermediate:'בינוני', advanced:'מתקדם', special:'מיוחד' };
 const DIFF_COLORS = { beginner:'var(--clr-beg)', intermediate:'var(--clr-int)', advanced:'var(--clr-adv)', special:'var(--clr-spc)' };
@@ -581,7 +625,9 @@ function renderHome() {
   grid.innerHTML = REGIONS.map(r => {
     const count = getRegionSites(r.id).length;
     return `<div class="region-card" onclick="showRegion('${r.id}')">
-      <div class="region-card-bg" style="background:${r.gradient}"></div>
+      <div class="region-card-bg" style="background:${r.gradient}">
+        ${r.photo ? `<img class="region-photo" src="${r.photo}" loading="lazy" alt="" onload="this.style.opacity='0.55'" onerror="this.style.display='none'">` : ''}
+      </div>
       <div class="region-card-overlay"></div>
       <div class="region-card-content">
         <div>
@@ -626,7 +672,9 @@ function renderSitesList(sites) {
   list.innerHTML = sites.map(s => {
     const d = s.depth[0] === s.depth[1] ? `${s.depth[1]}מ׳` : `${s.depth[0]}-${s.depth[1]}מ׳`;
     return `<div class="site-card" onclick="showSite('${s.id}')">
-      <div class="site-card-thumb ${s.hero}"></div>
+      <div class="site-card-thumb ${s.hero}">
+        ${PHOTOS[s.id] ? `<img class="thumb-photo" src="${PHOTOS[s.id]}" loading="lazy" alt="" onload="this.style.opacity='1'" onerror="this.style.display='none'">` : ''}
+      </div>
       <div class="site-card-body">
         <div>
           <div class="site-card-name">${s.name}</div>
@@ -650,6 +698,15 @@ function showSite(sid) {
   document.getElementById('site-hero').className = 'site-hero ' + site.hero;
   document.getElementById('site-hero-name').textContent = site.name;
   document.getElementById('site-hero-name-en').textContent = site.nameEn;
+  const heroImg = document.getElementById('site-hero-img');
+  heroImg.style.opacity = '0';
+  if (PHOTOS[site.id]) {
+    heroImg.src = PHOTOS[site.id];
+    heroImg.onload = () => { heroImg.style.opacity = '0.72'; };
+    heroImg.onerror = () => { heroImg.style.display = 'none'; };
+  } else {
+    heroImg.src = '';
+  }
 
   document.getElementById('hero-bubbles').innerHTML = Array.from({length:7}, (_,i) => {
     const sz = 4 + Math.random()*8, left = 10 + Math.random()*80;
