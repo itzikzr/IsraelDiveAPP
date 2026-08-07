@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>צלילה בישראל</title>
+<meta name="description" content="מדריך אתרי הצלילה בישראל — ים סוף, ים תיכון, ים המלח. מעל 30 אתרי צלילה עם ניווט, עומק וחיי ים.">
+<meta name="theme-color" content="#060F1E">
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="צלילה">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23060F1E'/%3E%3Ctext y='.9em' font-size='80' x='10'%3E🤿%3C/text%3E%3C/svg%3E">
+
+<style>
+:root {
+  --abyss: #030810;
+  --deep: #060F1E;
+  --midnight: #0A1628;
+  --current: #162440;
+  --shelf: #1E3355;
+  --bio: #00DDB8;
+  --bio-dim: rgba(0,221,184,0.15);
+  --coral-accent: #FF6040;
+  --text-1: #E0F0FF;
+  --text-2: #7AAAC8;
+  --text-3: #3A6080;
+  --surf-1: #0D1E32;
+  --surf-2: #132840;
+  --surf-3: #1A3452;
+  --clr-beg: #00C080;
+  --clr-int: #F09020;
+  --clr-adv: #E04040;
+  --clr-spc: #A060FF;
+  --r-sm: 10px;
+  --r-md: 18px;
+  --r-lg: 26px;
+  --header-h: 60px;
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --font: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --deep: #EFF6FF; --midnight: #DDEEFF; --current: #FAFCFF;
+    --surf-1: #FFFFFF; --surf-2: #F0F7FF; --surf-3: #E2EFF9;
+    --text-1: #0A2040; --text-2: #2A5080; --text-3: #6A90B0;
+    --bio: #007A98; --bio-dim: rgba(0,122,152,0.1); --coral-accent: #D04020;
+  }
+}
+:root[data-theme="light"] {
+  --deep: #EFF6FF; --midnight: #DDEEFF; --current: #FAFCFF;
+  --surf-1: #FFFFFF; --surf-2: #F0F7FF; --surf-3: #E2EFF9;
+  --text-1: #0A2040; --text-2: #2A5080; --text-3: #6A90B0;
+  --bio: #007A98; --bio-dim: rgba(0,122,152,0.1); --coral-accent: #D04020;
+}
+:root[data-theme="dark"] {
+  --deep: #030810; --midnight: #0A1628; --current: #162440;
+  --surf-1: #0D1E32; --surf-2: #132840; --surf-3: #1A3452;
+  --text-1: #E0F0FF; --text-2: #7AAAC8; --text-3: #3A6080;
+  --bio: #00DDB8; --bio-dim: rgba(0,221,184,0.15); --coral-accent: #FF6040;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { height: 100%; }
+body {
+  height: 100%; height: 100dvh;
+  overflow: hidden; background: var(--abyss);
+  font-family: var(--font); direction: rtl;
+  padding-top: var(--sat); padding-bottom: var(--sab);
+}
+
+#app {
+  width: 100%; max-width: 430px; height: 100%; height: 100dvh;
+  margin: 0 auto; background: var(--deep);
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column;
+}
+
+.view {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  background: var(--deep);
+  transform: translateX(100%);
+  transition: transform 0.32s cubic-bezier(0.4,0,0.2,1);
+  will-change: transform;
+}
+.view.active { transform: translateX(0); }
+.view.behind { transform: translateX(-30%); }
+
+/* HEADER */
+.app-header {
+  height: var(--header-h); min-height: var(--header-h);
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 16px;
+  background: var(--surf-1);
+  border-bottom: 1px solid var(--surf-3);
+  position: relative; z-index: 10; flex-shrink: 0;
+}
+.back-btn {
+  width: 36px; height: 36px; border: none; background: var(--surf-2);
+  border-radius: 50%; cursor: pointer; color: var(--bio);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 20px; line-height: 1;
+}
+.back-btn:active { opacity: 0.7; }
+.header-title { flex: 1; }
+.header-title .ht-main { font-size: 17px; font-weight: 700; color: var(--text-1); }
+.header-title .ht-sub { font-size: 12px; color: var(--text-2); margin-top: 1px; }
+.theme-btn {
+  width: 36px; height: 36px; border: none; background: var(--surf-2);
+  border-radius: 50%; cursor: pointer; color: var(--text-2);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 16px;
+}
+
+/* HOME */
+#view-home .home-header {
+  background: linear-gradient(180deg, #040D1A 0%, #0A1628 100%);
+  padding: 20px 20px 22px; position: relative; overflow: hidden; flex-shrink: 0;
+}
+.home-header-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 80% 50%, rgba(0,221,184,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 20% 80%, rgba(0,80,160,0.2) 0%, transparent 50%);
+}
+.home-header-content { position: relative; z-index: 1; }
+.home-title { font-size: 28px; font-weight: 900; color: #E0F0FF; line-height: 1.1; letter-spacing: -0.5px; }
+.home-title span { color: #00DDB8; }
+.home-subtitle { font-size: 14px; color: rgba(122,170,200,0.9); margin-top: 6px; }
+.home-stats { display: flex; gap: 20px; margin-top: 16px; }
+.home-stat .num { font-size: 22px; font-weight: 800; color: #00DDB8; font-variant-numeric: tabular-nums; }
+.home-stat .lbl { font-size: 11px; color: rgba(122,170,200,0.7); margin-top: 2px; }
+
+.regions-grid {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  padding: 14px; display: flex; flex-direction: column; gap: 12px;
+  -webkit-overflow-scrolling: touch;
+}
+.region-card {
+  border-radius: var(--r-md); overflow: hidden; cursor: pointer;
+  position: relative; min-height: 115px;
+  transition: transform 0.15s ease;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+.region-card:active { transform: scale(0.97); }
+.region-card-bg { position: absolute; inset: 0; background-size: cover; background-position: center; }
+.region-card-overlay { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.15) 100%); }
+.region-card-content {
+  position: relative; z-index: 1; padding: 16px 18px;
+  display: flex; align-items: flex-end; justify-content: space-between; min-height: 115px;
+}
+.region-tag {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 20px; margin-bottom: 5px;
+  background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.9);
+  backdrop-filter: blur(4px);
+}
+.region-name { font-size: 20px; font-weight: 800; color: #fff; line-height: 1.15; }
+.region-desc { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 3px; }
+.region-count {
+  display: flex; flex-direction: column; align-items: center;
+  background: rgba(0,0,0,0.4); border-radius: 12px; padding: 8px 12px;
+  backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1);
+  margin-right: 8px; flex-shrink: 0;
+}
+.region-count .cnt { font-size: 24px; font-weight: 900; color: #fff; line-height: 1; font-variant-numeric: tabular-nums; }
+.region-count .lbl { font-size: 10px; color: rgba(255,255,255,0.7); margin-top: 2px; }
+
+/* REGION VIEW */
+.region-filter-bar {
+  display: flex; gap: 8px; padding: 10px 14px;
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; background: var(--surf-1);
+  border-bottom: 1px solid var(--surf-3); flex-shrink: 0;
+}
+.region-filter-bar::-webkit-scrollbar { display: none; }
+.filter-chip {
+  border: none; border-radius: 20px; padding: 6px 14px;
+  font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0;
+  background: var(--surf-2); color: var(--text-2);
+  transition: background 0.15s, color 0.15s;
+}
+.filter-chip.active { background: var(--bio); color: #000A14; }
+.filter-chip:active { opacity: 0.8; }
+
+.sites-list {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  padding: 12px; display: flex; flex-direction: column; gap: 10px;
+  -webkit-overflow-scrolling: touch;
+}
+.site-card {
+  background: var(--surf-1); border-radius: var(--r-md);
+  overflow: hidden; cursor: pointer; display: flex; align-items: stretch;
+  border: 1px solid var(--surf-3);
+  transition: transform 0.15s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+.site-card:active { transform: scale(0.98); }
+.site-card-thumb { width: 88px; min-height: 88px; flex-shrink: 0; position: relative; overflow: hidden; }
+.site-card-body { flex: 1; padding: 12px 14px; display: flex; flex-direction: column; justify-content: space-between; }
+.site-card-name { font-size: 16px; font-weight: 700; color: var(--text-1); line-height: 1.2; }
+.site-card-name-en { font-size: 11px; color: var(--text-3); margin-top: 2px; direction: ltr; text-align: right; }
+.site-card-meta { display: flex; gap: 6px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
+.depth-badge {
+  font-size: 12px; font-weight: 700; color: var(--bio); background: var(--bio-dim);
+  border-radius: 6px; padding: 3px 8px; font-variant-numeric: tabular-nums;
+}
+.diff-chip { font-size: 11px; font-weight: 600; border-radius: 6px; padding: 3px 8px; }
+.diff-chip.beginner { background: rgba(0,192,128,0.15); color: var(--clr-beg); }
+.diff-chip.intermediate { background: rgba(240,144,32,0.15); color: var(--clr-int); }
+.diff-chip.advanced { background: rgba(224,64,64,0.15); color: var(--clr-adv); }
+.diff-chip.special { background: rgba(160,96,255,0.15); color: var(--clr-spc); }
+.type-chip { font-size: 11px; color: var(--text-3); background: var(--surf-2); border-radius: 6px; padding: 3px 8px; }
+
+/* SITE DETAIL */
+.site-hero { height: 220px; position: relative; overflow: hidden; flex-shrink: 0; }
+.site-hero-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.65) 100%); z-index: 1; }
+.site-hero-content { position: absolute; bottom: 0; right: 0; left: 0; padding: 16px 20px; z-index: 2; }
+.site-hero-name { font-size: 26px; font-weight: 900; color: #fff; line-height: 1.1; }
+.site-hero-name-en { font-size: 14px; color: rgba(255,255,255,0.7); margin-top: 3px; direction: ltr; }
+.site-hero-back {
+  position: absolute; top: 16px; right: 16px; z-index: 3;
+  width: 38px; height: 38px; border: none; cursor: pointer;
+  background: rgba(0,0,0,0.45); border-radius: 50%;
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  font-size: 20px; backdrop-filter: blur(4px); line-height: 1;
+}
+
+.site-stats-bar {
+  display: flex; gap: 0; background: var(--surf-1);
+  border-bottom: 1px solid var(--surf-3); flex-shrink: 0;
+}
+.stat-item { flex: 1; padding: 11px 6px; text-align: center; border-right: 1px solid var(--surf-3); }
+.stat-item:last-child { border-right: none; }
+.stat-item .val { font-size: 16px; font-weight: 800; color: var(--bio); font-variant-numeric: tabular-nums; line-height: 1.2; }
+.stat-item .lbl { font-size: 10px; color: var(--text-3); margin-top: 2px; letter-spacing: 0.3px; }
+
+.site-body { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; background: var(--deep); }
+.site-section {
+  margin: 12px; background: var(--surf-1); border-radius: var(--r-md);
+  overflow: hidden; border: 1px solid var(--surf-3);
+}
+.site-section-header {
+  padding: 13px 16px 10px; display: flex; align-items: center; gap: 8px;
+  border-bottom: 1px solid var(--surf-3);
+}
+.section-icon { font-size: 17px; }
+.section-title { font-size: 15px; font-weight: 700; color: var(--text-1); }
+.site-section-body { padding: 14px 16px; }
+.site-description { font-size: 15px; color: var(--text-1); line-height: 1.65; }
+.site-description p + p { margin-top: 10px; }
+
+.marine-life-grid { display: flex; flex-wrap: wrap; gap: 7px; }
+.marine-chip {
+  background: var(--surf-2); border-radius: 20px;
+  padding: 6px 12px; font-size: 13px; color: var(--text-2);
+  border: 1px solid var(--surf-3);
+}
+
+.depth-bar-wrap { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+.depth-label { font-size: 11px; color: var(--text-3); width: 50px; flex-shrink: 0; }
+.depth-track { flex: 1; height: 10px; background: var(--surf-3); border-radius: 5px; overflow: hidden; }
+.depth-fill {
+  height: 100%; border-radius: 5px;
+  background: linear-gradient(90deg, #00DDB8, #0080CC);
+  transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+}
+.depth-val { font-size: 14px; font-weight: 800; color: var(--bio); width: 42px; text-align: left; font-variant-numeric: tabular-nums; }
+
+.entry-info { display: flex; flex-direction: column; gap: 10px; }
+.entry-row { display: flex; gap: 10px; align-items: flex-start; }
+.entry-row-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+.entry-row-text { font-size: 14px; color: var(--text-1); line-height: 1.5; }
+.entry-row-label { font-size: 11px; color: var(--text-3); margin-bottom: 2px; }
+.season-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(240,144,32,0.12); border: 1px solid rgba(240,144,32,0.3);
+  border-radius: 8px; padding: 8px 12px; font-size: 13px; color: var(--clr-int);
+}
+.coords-text { font-size: 12px; color: var(--text-3); margin-top: 8px; font-variant-numeric: tabular-nums; direction: ltr; text-align: right; }
+.extra-badge { margin-top: 10px; padding: 8px 12px; background: var(--surf-2); border-radius: 8px; font-size: 13px; color: var(--text-2); }
+
+.nav-btn-wrap { padding: 12px 12px 2px; }
+.nav-btn {
+  width: 100%; padding: 15px; border: none; border-radius: var(--r-md);
+  background: var(--bio); color: #000A14;
+  font-size: 16px; font-weight: 800; cursor: pointer; font-family: var(--font);
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  transition: opacity 0.15s;
+}
+.nav-btn:active { opacity: 0.85; }
+.nav-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+.bottom-spacer { height: 40px; }
+
+/* HERO GRADIENTS */
+.hg-reef-shallow { background: radial-gradient(ellipse at 30% 40%, rgba(0,200,180,0.4) 0%, transparent 55%), radial-gradient(ellipse at 70% 70%, rgba(0,140,200,0.3) 0%, transparent 50%), linear-gradient(180deg, #0088AA 0%, #005577 45%, #003355 100%); }
+.hg-reef-deep { background: radial-gradient(ellipse at 50% 20%, rgba(0,120,160,0.3) 0%, transparent 55%), linear-gradient(180deg, #004466 0%, #002244 50%, #001122 100%); }
+.hg-wreck { background: radial-gradient(ellipse at 40% 60%, rgba(60,100,140,0.3) 0%, transparent 55%), linear-gradient(180deg, #1A2A40 0%, #0A1828 50%, #050D18 100%); }
+.hg-cave { background: radial-gradient(ellipse at 50% 5%, rgba(80,180,255,0.18) 0%, transparent 45%), linear-gradient(180deg, #071828 0%, #030C18 55%, #010408 100%); }
+.hg-dolphin { background: radial-gradient(ellipse at 35% 35%, rgba(0,230,255,0.25) 0%, transparent 55%), radial-gradient(ellipse at 70% 70%, rgba(0,160,200,0.2) 0%, transparent 50%), linear-gradient(180deg, #0099BB 0%, #006688 50%, #004466 100%); }
+.hg-canyon { background: radial-gradient(ellipse at 50% 30%, rgba(0,80,160,0.4) 0%, transparent 50%), linear-gradient(180deg, #0A1E3A 0%, #050F20 55%, #020810 100%); }
+.hg-archaeological { background: radial-gradient(ellipse at 60% 30%, rgba(180,140,60,0.18) 0%, transparent 55%), linear-gradient(180deg, #005577 0%, #003355 50%, #001A33 100%); }
+.hg-sharks { background: radial-gradient(ellipse at 50% 80%, rgba(80,0,0,0.25) 0%, transparent 60%), radial-gradient(ellipse at 50% 20%, rgba(0,40,80,0.4) 0%, transparent 55%), linear-gradient(180deg, #0A1828 0%, #050C14 100%); }
+.hg-salt { background: radial-gradient(ellipse at 50% 50%, rgba(200,220,240,0.3) 0%, transparent 55%), linear-gradient(180deg, #889AB0 0%, #667888 50%, #445566 100%); }
+.hg-submarine { background: radial-gradient(ellipse at 30% 70%, rgba(40,80,140,0.35) 0%, transparent 55%), linear-gradient(180deg, #0D1C30 0%, #060E1C 50%, #020810 100%); }
+
+/* BUBBLES */
+.bubbles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.bubble { position: absolute; border-radius: 50%; border: 1px solid rgba(255,255,255,0.15); animation: rise linear infinite; }
+@keyframes rise { 0% { transform: translateY(0); opacity: 0.5; } 100% { transform: translateY(-90px); opacity: 0; } }
+
+/* INSTALL BANNER */
+.install-banner {
+  position: fixed; bottom: calc(16px + var(--sab)); left: 50%; transform: translateX(-50%);
+  background: var(--surf-1); border: 1px solid var(--bio);
+  border-radius: var(--r-md); padding: 12px 16px;
+  display: flex; align-items: center; gap: 12px;
+  box-shadow: 0 8px 30px rgba(0,221,184,0.2);
+  z-index: 100; min-width: 280px; max-width: 360px;
+  animation: slideUp 0.4s ease;
+}
+@keyframes slideUp { from { transform: translateX(-50%) translateY(100px); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
+.install-banner p { font-size: 13px; color: var(--text-1); flex: 1; line-height: 1.4; }
+.install-btn { border: none; background: var(--bio); color: #000A14; font-weight: 700; font-size: 13px; padding: 8px 14px; border-radius: 10px; cursor: pointer; white-space: nowrap; }
+.install-close { border: none; background: transparent; color: var(--text-3); font-size: 18px; cursor: pointer; line-height: 1; padding: 4px; }
+
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--surf-3); border-radius: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .view { transition: none; }
+  .bubble { animation: none; }
+  .depth-fill { transition: none; }
+  .install-banner { animation: none; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="view-home" class="view active">
+    <div class="home-header">
+      <div class="home-header-bg"></div>
+      <div class="home-header-content">
+        <div class="home-title">צלילה <span>בישראל</span></div>
+        <div class="home-subtitle">המדריך המלא לאתרי הצלילה</div>
+        <div class="home-stats">
+          <div class="home-stat"><div class="num">30+</div><div class="lbl">אתרי צלילה</div></div>
+          <div class="home-stat"><div class="num">4</div><div class="lbl">אזורים</div></div>
+          <div class="home-stat"><div class="num">3</div><div class="lbl">ימים</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="regions-grid" id="regions-grid"></div>
+  </div>
+
+  <div id="view-region" class="view">
+    <div class="app-header">
+      <button class="back-btn" onclick="goHome()" aria-label="חזרה">›</button>
+      <div class="header-title">
+        <div class="ht-main" id="region-header-name"></div>
+        <div class="ht-sub" id="region-header-sub"></div>
+      </div>
+      <button class="theme-btn" onclick="toggleTheme()" aria-label="ערכת נושא">◐</button>
+    </div>
+    <div class="region-filter-bar" id="region-filter-bar"></div>
+    <div class="sites-list" id="sites-list"></div>
+  </div>
+
+  <div id="view-site" class="view">
+    <div class="site-hero" id="site-hero">
+      <button class="site-hero-back" onclick="goRegion()" aria-label="חזרה">›</button>
+      <div class="site-hero-overlay"></div>
+      <div class="bubbles" id="hero-bubbles"></div>
+      <div class="site-hero-content">
+        <div class="site-hero-name" id="site-hero-name"></div>
+        <div class="site-hero-name-en" id="site-hero-name-en"></div>
+      </div>
+    </div>
+    <div class="site-stats-bar" id="site-stats-bar"></div>
+    <div class="site-body" id="site-body"></div>
+  </div>
+</div>
+
+<script>
+const REGIONS = [
+  { id:'eilat', name:'אילת — ים סוף', tag:'דרום', desc:'שוניות האלמוגים הצפוניות בעולם', gradient:'radial-gradient(ellipse at 30% 40%, rgba(0,200,180,0.5) 0%, transparent 55%), linear-gradient(140deg, #006B8A 0%, #00A090 55%, #006B60 100%)' },
+  { id:'north', name:'צפון — ים תיכון', tag:'צפון', desc:'קניונות, מערות, אוניות מלחמה', gradient:'radial-gradient(ellipse at 70% 30%, rgba(40,100,180,0.5) 0%, transparent 55%), linear-gradient(140deg, #1A3A60 0%, #0D2240 55%, #091830 100%)' },
+  { id:'center', name:'מרכז — ים תיכון', tag:'מרכז', desc:'ארכיאולוגיה, ספינות וכרישים', gradient:'radial-gradient(ellipse at 40% 60%, rgba(60,120,200,0.4) 0%, transparent 55%), linear-gradient(140deg, #1E3A5A 0%, #102233 55%, #071520 100%)' },
+  { id:'deadsea', name:'ים המלח', tag:'מיוחד', desc:'הנמוך ביותר על פני כדור הארץ', gradient:'radial-gradient(ellipse at 50% 40%, rgba(180,210,240,0.5) 0%, transparent 55%), linear-gradient(140deg, #889AB0 0%, #667080 55%, #445060 100%)' },
+];
+
+const SITES = [
+  { id:'e01', region:'eilat', name:'שמורת האלמוגים', nameEn:'Coral Beach Reserve', depth:[5,15], diff:'beginner', type:'reef', hero:'hg-reef-shallow', lat:29.5020, lng:34.9139,
+    desc:'<p>שמורת הטבע הימי של אילת — הבית לשוניית האלמוגים הצפונית ביותר בעולם. אלפי מינים של אלמוגים, דגים ובעלי חיים ימיים.</p><p>הגישה נוחה ישירות מהחוף. מתאים מאוד למתחילים וסנורקלינג.</p>',
+    marine:['אלמוגים קשיחים','אלמוגים רכים','דגי ציפחה','צב ים','שרימפס','מורנה','אוקטופוס','נפוליאון'],
+    entry:'כניסה מהחוף, קרוב למרכז צלילה אקווה ספורט. חניה בסמוך.', entryType:'חוף', notes:null, season:null },
+
+  { id:'e02', region:'eilat', name:'סלע משה', nameEn:'Moses Rock', depth:[3,8], diff:'beginner', type:'reef', hero:'hg-reef-shallow', lat:29.5066, lng:34.9111,
+    desc:'<p>השונית הגדולה ביותר בחוף אילת — כמעט נוגע בפני הים! ריכוז אדיר של אלמוגים ודגים צבעוניים.</p><p>האתר הנפוץ והאהוב ביותר לצוללי PADI מתחילים. ניראות מצוינת.</p>',
+    marine:['דגי ציפחה','מורנות','נפוליאון','צבי ים','שרימפס ניקיון','אלמוגי כנרית'],
+    entry:'כניסה מהחוף, סמוך לשמורת האלמוגים.', entryType:'חוף', notes:null, season:null },
+
+  { id:'e03', region:'eilat', name:'גן ים', nameEn:'Eel Garden', depth:[8,15], diff:'beginner', type:'reef', hero:'hg-reef-shallow', lat:29.5045, lng:34.9125,
+    desc:'<p>גן קסום של מנוחות ים — מאות מנוחות מציצות מהחול ומתנדנדות בזרם כמו גן חי ורוטט.</p>',
+    marine:['מנוחות גן','תמנוניות','דגי פרפר','שרימפס','ציפחות'],
+    entry:'גישה מהחוף, ניתן לשחות לאתר.', entryType:'חוף', notes:null, season:null },
+
+  { id:'e04', region:'eilat', name:'המערות', nameEn:'The Caves', depth:[5,8], diff:'beginner', type:'cave', hero:'hg-cave', lat:29.5155, lng:34.9056,
+    desc:'<p>רצועת שונית באורך 100 מ׳ עם מעברים תת-ימיים מפותלים ומלאי חיים. אחד מאתרי הצלילה הנפוצים באילת.</p>',
+    marine:['מורנות','שרימפס צבעוניים','דגי אבן','אלמוגים רכים'],
+    entry:'כניסה מהחוף, 1.5 ק"מ צפון לטאבה.', entryType:'חוף', notes:null, season:null },
+
+  { id:'e05', region:'eilat', name:'הגן היפני', nameEn:'Japanese Gardens', depth:[15,50], diff:'intermediate', type:'reef', hero:'hg-reef-deep', lat:29.4940, lng:34.9176,
+    desc:'<p>אחת השוניות המרהיבות ביותר בים סוף — רצועת שונית ארוכה עם עצי אלמוג ענקיים, ניראות יוצאת דופן ופחות צוללים.</p><p>בחלק העמוק (35-50 מ׳) ניתן לראות כריש שוניות ונפוליאונים גדולים.</p>',
+    marine:['כריש שוניות לבנת-קצה','נפוליאון ענק','לוקוסים','דגי אריה','אלמוג עץ ענקי'],
+    entry:'גישה בסירה בלבד — לתאם עם מרכז צלילה.', entryType:'סירה', notes:'מתאים לרמת Intermediate ומעלה. בעומק מעל 30 מ׳ — Advanced Diver.', season:null },
+
+  { id:'e06', region:'eilat', name:'שולחנות נפטון', nameEn:"Neptune's Tables", depth:[15,40], diff:'intermediate', type:'reef', hero:'hg-reef-deep', lat:29.4920, lng:34.9196,
+    desc:'<p>שולחנות אלמוג אקרופורה ענקיים — מבנים כמו שולחנות ישנים מכוסים אלמוגים — על קרקעית חולית. נוף ייחודי ומרהיב.</p>',
+    marine:['אלמוגי אקרופורה','כריש שוניות','לוקוס','דגי ציפחה'],
+    entry:'גישה בסירה בלבד.', entryType:'סירה', notes:null, season:null },
+
+  { id:'e07', region:'eilat', name:'הסאטיל', nameEn:'Satil Wreck', depth:[18,24], diff:'intermediate', type:'wreck', hero:'hg-wreck', lat:29.5010, lng:34.9130,
+    desc:'<p>ספינת טילים (45 מ׳ ארוכה) שהוטבעה בכוונה ב-1994 כאתר צלילה. כיום מכוסה כולה באלמוגים רכים מדהימים ועשירה מאוד בחיי ים.</p>',
+    marine:['אלמוגים רכים','מורנות','ברבוניות','סרטנים','שרימפס ניקיון'],
+    entry:'גישה מהחוף או בסירה.', entryType:'חוף / סירה', notes:'כניסה לפנים הספינה — Advanced Diver בלבד.', season:null, extra:'ספינת טילים | הוטבעה 1994 | 45 מ׳ אורך' },
+
+  { id:'e08', region:'eilat', name:'היאטוש', nameEn:'Yatush Wreck', depth:[26,32], diff:'advanced', type:'wreck', hero:'hg-wreck', lat:29.5000, lng:34.9140,
+    desc:'<p>אנייה בעומק משמעותי שהוטבעה — מציעה טבילה ייחודית עם מגוון חיי ים עשיר. מאתגר יותר מהסאטיל.</p>',
+    marine:['מורנות','פרפריות','דגי שונית','ספוגים'],
+    entry:'גישה בסירה בלבד.', entryType:'סירה', notes:'מינימום Advanced Open Water + ניסיון בצלילות עומק.', season:null },
+
+  { id:'e09', region:'eilat', name:'דולפין ריף', nameEn:'Dolphin Reef', depth:[5,12], diff:'beginner', type:'reef', hero:'hg-dolphin', lat:29.5123, lng:34.9001,
+    desc:'<p>הדולפינים חיים כאן מרצונם החופשי — הם בוחרים לחזור שוב ושוב. צלילה עם דולפינים בוטנוס בסביבה הטבעית שלהם.</p>',
+    marine:['דולפינים בוטנוס','דגי שונית','צבי ים','מנוחות'],
+    entry:'כניסה דרך מתחם דולפין ריף. כרטיסים מראש.', entryType:'חוף (מתחם)', notes:'לא מובטח מפגש עם דולפינים.', season:null },
+
+  { id:'e10', region:'eilat', name:'הפירמידה', nameEn:'The Pyramid', depth:[20,30], diff:'intermediate', type:'reef', hero:'hg-reef-deep', lat:29.5050, lng:34.9120,
+    desc:'<p>מבנה מלאכותי שנבנה בתחילת שנות ה-90 — כיום מכוסה לחלוטין בספוגי אלמוג אדומים ורודים מדהימים.</p>',
+    marine:['ספוגי אלמוג אדומים','כריש שוניות','לוקוסים','מורנות'],
+    entry:'גישה בסירה בלבד.', entryType:'סירה', notes:null, season:null },
+
+  { id:'e11', region:'eilat', name:'הקניון', nameEn:'The Canyon', depth:[20,60], diff:'advanced', type:'canyon', hero:'hg-canyon', lat:29.4970, lng:34.9160,
+    desc:'<p>ואדי תת-ימי עמוק ומרהיב — יורד לעומק ניכר עם נוף מדהים של קירות שונית תלולים.</p>',
+    marine:['כריש שוניות','נפוליאון','להקות דגים','אלמוגי עץ'],
+    entry:'גישה בסירה.', entryType:'סירה', notes:'Deep Diver Certification מומלץ.', season:null },
+
+  { id:'e12', region:'eilat', name:'קז"א', nameEn:'KZA Pier', depth:[8,18], diff:'intermediate', type:'reef', hero:'hg-reef-shallow', lat:29.5035, lng:34.9108,
+    desc:'<p>רציף שנפתח לציבור ב-2017 — עמודים ענקיים מכוסים אלמוגים שמושכים מגוון עשיר של חיי ים.</p>',
+    marine:['אלמוגים','מורנות','סרטנים','ברבוניות'],
+    entry:'כניסה מהחוף.', entryType:'חוף', notes:null, season:null },
+
+  { id:'e13', region:'eilat', name:'שלוש האחיות', nameEn:'Three Sisters', depth:[4,8], diff:'beginner', type:'reef', hero:'hg-reef-shallow', lat:29.5080, lng:34.9100,
+    desc:'<p>שלוש שוניות אלמוג ענקיות ויוצאות דופן, מרוחקות כ-50 מ׳ זו מזו על קרקעית חולית. מושלם לצלילות לילה.</p>',
+    marine:['אלמוגים קשיחים','דגי ציפחה','צבי ים','שרימפס'],
+    entry:'גישה מהחוף.', entryType:'חוף', notes:'מעולה לצלילות לילה.', season:null },
+
+  { id:'e14', region:'eilat', name:'האוניברסיטה', nameEn:'University / Lighthouse', depth:[6,18], diff:'beginner', type:'reef', hero:'hg-reef-shallow', lat:29.5060, lng:34.9105,
+    desc:'<p>שונית מדרגית עמוסה בחיי ים, בסמוך לתחנת המחקר הימי. מגוון גבוה מאוד — מצוין לצילום תת-ימי.</p>',
+    marine:['מגוון דגי שונית','צבי ים','מנוחות','דג אריה'],
+    entry:'גישה מהחוף.', entryType:'חוף', notes:null, season:null },
+
+  { id:'e15', region:'eilat', name:'הסאן בואט', nameEn:'San Boat', depth:[12,15], diff:'intermediate', type:'wreck', hero:'hg-wreck', lat:29.5025, lng:34.9135,
+    desc:'<p>ספינה שהוטבעה ב-2010 עומדת זקופה על קרקעית חולית עם הגשר כלפי צפון. ארוכה כ-30 מ׳.</p>',
+    marine:['מורנות','ברבוניות','אלמוגים','שרימפס'],
+    entry:'גישה מהחוף.', entryType:'חוף', notes:null, season:null, extra:'הוטבעה 2010 | 30 מ׳' },
+
+  { id:'e16', region:'eilat', name:'גן מלפפוני הים', nameEn:'Sea Cucumber Garden', depth:[6,18], diff:'intermediate', type:'reef', hero:'hg-reef-shallow', lat:29.5030, lng:34.9115,
+    desc:'<p>שיפוע חולי עם שוניות אלמוג יפות שמהן מציצים מלפפוני ים ענקיים המתנדנדים בזרם.</p>',
+    marine:['מלפפוני ים','דגי ציפחה','אוקטופוס','שרימפס'],
+    entry:'גישה מהחוף.', entryType:'חוף', notes:null, season:null },
+
+  // NORTH
+  { id:'n01', region:'north', name:'נקרות ראש הנקרה', nameEn:'Rosh Hanikra Caves', depth:[4,20], diff:'intermediate', type:'cave', hero:'hg-cave', lat:33.0883, lng:35.1039,
+    desc:'<p>ראש הנקרה מציע מערות ונקרות תת-ימיות מרהיבות עם משחקי אור וצבע ייחודיים.</p><p>גישה מהים בלבד, בליווי מדריך.</p>',
+    marine:['ספוגים','תמנוניות','דגי שונית ים-תיכוניים','רכיכות'],
+    entry:'גישה מהים בלבד בסירה.', entryType:'סירה', notes:'אזור גבול — מדריך מוסמך חובה.', season:null },
+
+  { id:'n02', region:'north', name:'קניון אכזיב', nameEn:'Achziv Canyon', depth:[10,30], diff:'intermediate', type:'canyon', hero:'hg-canyon', lat:33.0493, lng:35.1021,
+    desc:'<p>קניון תת-ימי מדהים ליד שמורת אכזיב — אחד מהאתרים הנחשבים ביותר בים התיכון הישראלי.</p>',
+    marine:['מורנות','תמנוניות','ספוגים ים-תיכוניים','דגי שונית','כוכבי ים'],
+    entry:'גישה מהחוף ומהסירה.', entryType:'חוף / סירה', notes:null, season:null },
+
+  { id:'n03', region:'north', name:'האנייה הטורקית', nameEn:'Turkish Ship', depth:[8,12], diff:'beginner', type:'wreck', hero:'hg-wreck', lat:33.0043, lng:35.0834,
+    desc:'<p>שרידי ספינה טורקית עתיקה מרתקת — אתר היסטורי לצלילה ליד נהרייה. עומק רדוד ונגיש.</p>',
+    marine:['ספוגים','תמנוניות','רכיכות','דגי שונית'],
+    entry:'גישה בסירה. כ-900 מ׳ מחוף נהרייה.', entryType:'סירה', notes:null, season:null },
+
+  { id:'n04', region:'north', name:'א"ח כידון', nameEn:'INS Kidon Destroyer', depth:[22,26], diff:'advanced', type:'wreck', hero:'hg-submarine', lat:33.0270, lng:35.0892,
+    desc:'<p>אנייה קרבית ישראלית שהוטבעה כאנדרטה לזכר 12 לוחמים שנפלו. אתר בעל משמעות היסטורית עמוקה.</p>',
+    marine:['ספוגים','מורנות','דגי שונית','תמנוניות'],
+    entry:'גישה בסירה. 3 ק"מ צפון-מערב לחוף שבי ציון.', entryType:'סירה', notes:'ניסיון Advanced דרוש.', season:null, extra:'אנדרטה | 12 חללים | הוטבע לזכרם' },
+
+  { id:'n05', region:'north', name:'מערת אכזיב', nameEn:'Achziv Cave', depth:[3,8], diff:'beginner', type:'cave', hero:'hg-cave', lat:33.0500, lng:35.1015,
+    desc:'<p>מערה ים-תיכונית רדודה וקסומה עם כניסה טבעית מהחוף — מתאים מאוד לצוללים מתחילים.</p>',
+    marine:['שרימפס','ספוגים','רכיכות','דגי שונית'],
+    entry:'גישה מהחוף, מהצד הדרומי של חוף אכזיב.', entryType:'חוף', notes:null, season:null },
+
+  { id:'n06', region:'north', name:'גוררת איתנה', nameEn:'Tugboat Itana', depth:[15,20], diff:'intermediate', type:'wreck', hero:'hg-wreck', lat:33.0480, lng:35.0980,
+    desc:'<p>גוררת שהוטבעה במרץ 1996 — כיום מכוסה ספוגים ותמנוניות ומשמשת בית גידול עשיר.</p>',
+    marine:['ספוגים','תמנוניות','מורנות','ברבוניות'],
+    entry:'גישה בסירה, מערב לאיי אכזיב.', entryType:'סירה', notes:null, season:null, extra:'הוטבעה מרץ 1996' },
+
+  { id:'n07', region:'north', name:'הפטריות', nameEn:'The Mushrooms', depth:[8,15], diff:'intermediate', type:'reef', hero:'hg-reef-shallow', lat:33.0510, lng:35.1025,
+    desc:'<p>תצורות סלע יוצאות דופן בצורת פטריות ענק בשמורת אכזיב — נוף תת-ימי ייחודי.</p>',
+    marine:['ספוגים','תמנוניות','דגי שונית','כוכבי ים'],
+    entry:'גישה מהחוף ומהסירה בשמורת אכזיב.', entryType:'חוף / סירה', notes:null, season:null },
+
+  { id:'n08', region:'north', name:'צוללת שירה (SCIRE)', nameEn:'Italian Sub Scirè 1942', depth:[28,33], diff:'advanced', type:'wreck', hero:'hg-submarine', lat:32.8283, lng:35.0267,
+    desc:'<p>צוללת איטלקית ממלחמת העולם השנייה שהוטבעה ב-1942 — אחד מאתרי הצלילה ההיסטוריים המרשימים בישראל.</p><p>שרועה בעומק 33 מ׳ עם ספוגים ענקיים שמכסים את קונינה.</p>',
+    marine:['ספוגים ים-תיכוניים ענקיים','מורנות','דגי שונית','תמנוניות'],
+    entry:'גישה בסירה ממרינה חיפה.', entryType:'סירה', notes:'Advanced Diver בלבד.', season:null, extra:'צוללת מל"ע ה-2 | הוטבעה 1942 | 60 מ׳ אורך' },
+
+  { id:'n09', region:'north', name:'מערות שבי ציון', nameEn:'Shvei Zion Caves', depth:[5,12], diff:'beginner', type:'cave', hero:'hg-cave', lat:32.9710, lng:35.0780,
+    desc:'<p>מערות ים-תיכוניות יפות ליד חוף שבי ציון — כניסה קלה מהחוף.</p>',
+    marine:['ספוגים','שרימפס','רכיכות','דגי שונית'],
+    entry:'גישה מהחוף שבי ציון.', entryType:'חוף', notes:null, season:null },
+
+  // CENTER
+  { id:'c01', region:'center', name:'קיסריה — פארק ארכיאולוגי', nameEn:'Caesarea Archaeological Park', depth:[3,15], diff:'beginner', type:'archaeological', hero:'hg-archaeological', lat:32.4998, lng:34.8893,
+    desc:'<p>פארק הצלילה הארכיאולוגי הייחודי בעולם — שרידי נמל הורדוס מהמאה ה-1 לספירה. עוגנים עתיקים, כדי חרס, קירות נמל שנבנה בים.</p><p>לשחות בין שרידי ההנדסה הרומית הגדולה — חוויה שלא תישכח.</p>',
+    marine:['אוקטופוסים','ספוגים ים-תיכוניים','דגי שונית','כוכבי ים'],
+    entry:'גישה מהחוף ליד מרכז הצלילה הישן של קיסריה.', entryType:'חוף', notes:'שמורת מורשת — אין לגעת בממצאים!', season:null },
+
+  { id:'c02', region:'center', name:'חדרה — כרישים', nameEn:'Hadera Sharks', depth:[8,20], diff:'advanced', type:'reef', hero:'hg-sharks', lat:32.4680, lng:34.8780,
+    desc:'<p>תופעת הטבע הייחודית ביותר בים התיכון הישראלי — מדי חורף מגיעים אלפי כרישי דייה לחוף חדרה להתחמם ליד תעלת מי הקירור של תחנת הכוח.</p><p>צלילה עם כרישים בים התיכון — חוויה שאין כמותה!</p>',
+    marine:['כרישי דייה','כרישי רוזטה','דגי ים','מדוזות'],
+    entry:'גישה בסירה ממרינה חדרה.', entryType:'סירה', notes:'Advanced Diver חובה. עונתי בלבד.', season:'דצמבר — מרץ' },
+
+  { id:'c03', region:'center', name:'ספינת זאב הים', nameEn:'Sea Wolf Wreck', depth:[28,32], diff:'advanced', type:'wreck', hero:'hg-wreck', lat:32.0420, lng:34.7390,
+    desc:'<p>ספינת ים לשעבר של בית הספר לקציני ים — 45 מ׳ ארוכה — שוכבת מול חופי יפו. אחד האתרים הנחשבים לצלילת עומק בגוש דן.</p>',
+    marine:['ספוגים','מורנות','אוקטופוסים','דגי שונית'],
+    entry:'גישה בסירה ממרינה תל אביב.', entryType:'סירה', notes:'Advanced Diver. עומק 28-32 מ׳.', season:null, extra:'45 מ׳ אורך | 9 מ׳ רוחב' },
+
+  { id:'c04', region:'center', name:'מערות גורדון', nameEn:'Gordon Beach Caves', depth:[5,10], diff:'beginner', type:'cave', hero:'hg-cave', lat:32.0913, lng:34.7652,
+    desc:'<p>אתר צלילה נגיש בלב תל אביב ליד חוף גורדון — תצורות סלע ומערות ים קטנות. מצוין לקורסי צלילה.</p>',
+    marine:['ספוגים','שרימפס','דגי שונית','כוכבי ים'],
+    entry:'כניסה מחוף גורדון, תל אביב.', entryType:'חוף', notes:null, season:null },
+
+  { id:'c05', region:'center', name:'השחרר', nameEn:'The Dredger', depth:[15,20], diff:'intermediate', type:'wreck', hero:'hg-wreck', lat:32.0850, lng:34.7620,
+    desc:'<p>שרידי מכונת חפירה שהוטבעה — כיום משמשת בית גידול עשיר לחיי ים ים-תיכוניים.</p>',
+    marine:['ספוגים','מורנות','אוקטופוסים','סרטנים'],
+    entry:'גישה בסירה ממרינה תל אביב.', entryType:'סירה', notes:null, season:null },
+
+  { id:'c06', region:'center', name:'ראש הציפור', nameEn:"Bird's Head Canyon", depth:[12,15], diff:'intermediate', type:'canyon', hero:'hg-canyon', lat:32.0780, lng:34.7580,
+    desc:'<p>קניון תת-ימי ים-תיכוני בצורת ראש ציפור — טופוגרפיה מעניינת עם מגוון חיי ים.</p>',
+    marine:['ספוגים','תמנוניות','דגי שונית','שרימפס'],
+    entry:'גישה בסירה.', entryType:'סירה', notes:null, season:null },
+
+  { id:'c07', region:'center', name:'הבוטנה', nameEn:'Peanut Wreck', depth:[15,18], diff:'intermediate', type:'wreck', hero:'hg-wreck', lat:32.0720, lng:34.7530,
+    desc:'<p>שרידי ספינה שנשברה לשניים (ומכאן שמה) — שני חלקים נפרדים שכל אחד הוא אתר צלילה בפני עצמו.</p>',
+    marine:['ספוגים','מורנות','דגי שונית','תמנוניות'],
+    entry:'גישה בסירה ממרינה תל אביב.', entryType:'סירה', notes:null, season:null },
+
+  // DEAD SEA
+  { id:'d01', region:'deadsea', name:'עין בוקק', nameEn:'Ein Bokek Dead Sea Dive', depth:[3,10], diff:'special', type:'salt', hero:'hg-salt', lat:31.1882, lng:35.3617,
+    desc:'<p>הצלילה הייחודית ביותר בעולם — הנמוכה ביותר על פני כדור הארץ (430 מ׳ מתחת לפני הים)! מים כבדים פי 10.</p><p>אין חיי ים — רק גבישי מלח ייחודיים ומחזה אחר עולמי. נדרשות 30-40 ק"ג משקולות ומסכה פנים מלאה.</p>',
+    marine:['גבישי מלח ענקיים','תצורות סלע ייחודיות'],
+    entry:'חוף עין בוקק. מדריך מוסמך ים-המלח בלבד.', entryType:'חוף (מיוחד)', notes:'ציוד מיוחד: מסכה פנים מלאה + 30-40 ק"ג משקולות. מדריך מוסמך חובה.', season:'ספטמבר — יוני' },
+];
+
+const TYPE_LABELS = { reef:'שונית', wreck:'ספינה', cave:'מערה', canyon:'קניון', archaeological:'ארכיאולוגי', dolphins:'דולפינים', sharks:'כרישים', salt:'ים מלח' };
+const DIFF_LABELS = { beginner:'מתחיל', intermediate:'בינוני', advanced:'מתקדם', special:'מיוחד' };
+const DIFF_COLORS = { beginner:'var(--clr-beg)', intermediate:'var(--clr-int)', advanced:'var(--clr-adv)', special:'var(--clr-spc)' };
+
+let currentRegion = null;
+
+function getRegionSites(rid) { return SITES.filter(s => s.region === rid); }
+
+function renderHome() {
+  const grid = document.getElementById('regions-grid');
+  grid.innerHTML = REGIONS.map(r => {
+    const count = getRegionSites(r.id).length;
+    return `<div class="region-card" onclick="showRegion('${r.id}')">
+      <div class="region-card-bg" style="background:${r.gradient}"></div>
+      <div class="region-card-overlay"></div>
+      <div class="region-card-content">
+        <div>
+          <div class="region-tag">${r.tag}</div>
+          <div class="region-name">${r.name}</div>
+          <div class="region-desc">${r.desc}</div>
+        </div>
+        <div class="region-count">
+          <div class="cnt">${count}</div>
+          <div class="lbl">אתרים</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function showRegion(rid) {
+  currentRegion = rid;
+  const region = REGIONS.find(r => r.id === rid);
+  document.getElementById('region-header-name').textContent = region.name;
+  document.getElementById('region-header-sub').textContent = region.desc;
+  document.getElementById('region-filter-bar').innerHTML = `
+    <button class="filter-chip active" onclick="filterSites('all',this)">הכול</button>
+    <button class="filter-chip" onclick="filterSites('beginner',this)">מתחיל</button>
+    <button class="filter-chip" onclick="filterSites('intermediate',this)">בינוני</button>
+    <button class="filter-chip" onclick="filterSites('advanced',this)">מתקדם</button>
+    ${rid === 'deadsea' ? '<button class="filter-chip" onclick="filterSites(\'special\',this)">מיוחד</button>' : ''}`;
+  renderSitesList(getRegionSites(rid));
+  switchView('view-home', 'view-region');
+}
+
+function filterSites(diff, btn) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  const sites = getRegionSites(currentRegion);
+  renderSitesList(diff === 'all' ? sites : sites.filter(s => s.diff === diff));
+}
+
+function renderSitesList(sites) {
+  const list = document.getElementById('sites-list');
+  if (!sites.length) { list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-3)">אין אתרים ברמה זו</div>'; return; }
+  list.innerHTML = sites.map(s => {
+    const d = s.depth[0] === s.depth[1] ? `${s.depth[1]}מ׳` : `${s.depth[0]}-${s.depth[1]}מ׳`;
+    return `<div class="site-card" onclick="showSite('${s.id}')">
+      <div class="site-card-thumb ${s.hero}"></div>
+      <div class="site-card-body">
+        <div>
+          <div class="site-card-name">${s.name}</div>
+          <div class="site-card-name-en">${s.nameEn}</div>
+        </div>
+        <div class="site-card-meta">
+          <span class="depth-badge">⬇ ${d}</span>
+          <span class="diff-chip ${s.diff}">${DIFF_LABELS[s.diff]}</span>
+          <span class="type-chip">${TYPE_LABELS[s.type]||s.type}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function showSite(sid) {
+  const site = SITES.find(s => s.id === sid);
+  const depthStr = site.depth[0] === site.depth[1] ? `${site.depth[1]}` : `${site.depth[0]}-${site.depth[1]}`;
+  const depthPct = Math.min(100, (site.depth[1] / 65) * 100);
+
+  document.getElementById('site-hero').className = 'site-hero ' + site.hero;
+  document.getElementById('site-hero-name').textContent = site.name;
+  document.getElementById('site-hero-name-en').textContent = site.nameEn;
+
+  document.getElementById('hero-bubbles').innerHTML = Array.from({length:7}, (_,i) => {
+    const sz = 4 + Math.random()*8, left = 10 + Math.random()*80;
+    const dur = 3 + Math.random()*4, delay = Math.random()*4;
+    return `<div class="bubble" style="width:${sz}px;height:${sz}px;left:${left}%;bottom:${20+Math.random()*40}%;animation-duration:${dur}s;animation-delay:${delay}s"></div>`;
+  }).join('');
+
+  document.getElementById('site-stats-bar').innerHTML = `
+    <div class="stat-item">
+      <div class="val">${depthStr}</div><div class="lbl">עומק (מ׳)</div>
+    </div>
+    <div class="stat-item">
+      <div class="val" style="font-size:13px;color:${DIFF_COLORS[site.diff]}">${DIFF_LABELS[site.diff]}</div><div class="lbl">רמה</div>
+    </div>
+    <div class="stat-item">
+      <div class="val" style="font-size:12px">${TYPE_LABELS[site.type]||site.type}</div><div class="lbl">סוג</div>
+    </div>
+    <div class="stat-item">
+      <div class="val" style="font-size:11px">${site.entryType}</div><div class="lbl">כניסה</div>
+    </div>`;
+
+  document.getElementById('site-body').innerHTML = `
+    <div class="nav-btn-wrap">
+      <button class="nav-btn" onclick="navigate(${site.lat},${site.lng})">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+        נווט לאתר הצלילה
+      </button>
+    </div>
+    <div class="site-section">
+      <div class="site-section-header"><span class="section-icon">🌊</span><span class="section-title">על האתר</span></div>
+      <div class="site-section-body">
+        <div class="site-description">${site.desc}</div>
+        ${site.extra ? `<div class="extra-badge">${site.extra}</div>` : ''}
+      </div>
+    </div>
+    <div class="site-section">
+      <div class="site-section-header"><span class="section-icon">🐠</span><span class="section-title">חיי ים</span></div>
+      <div class="site-section-body">
+        <div class="marine-life-grid">${site.marine.map(m=>`<span class="marine-chip">${m}</span>`).join('')}</div>
+      </div>
+    </div>
+    <div class="site-section">
+      <div class="site-section-header"><span class="section-icon">📏</span><span class="section-title">פרופיל עומק</span></div>
+      <div class="site-section-body">
+        <div class="depth-bar-wrap">
+          <div class="depth-label">מינימום</div>
+          <div class="depth-track"><div class="depth-fill" style="width:${Math.min(100,(site.depth[0]/65)*100)}%"></div></div>
+          <div class="depth-val">${site.depth[0]}מ׳</div>
+        </div>
+        <div class="depth-bar-wrap" style="margin-top:8px">
+          <div class="depth-label">מקסימום</div>
+          <div class="depth-track"><div class="depth-fill" style="width:${depthPct}%"></div></div>
+          <div class="depth-val">${site.depth[1]}מ׳</div>
+        </div>
+      </div>
+    </div>
+    <div class="site-section">
+      <div class="site-section-header"><span class="section-icon">📍</span><span class="section-title">כניסה ומיקום</span></div>
+      <div class="site-section-body">
+        <div class="entry-info">
+          <div class="entry-row">
+            <div class="entry-row-icon">🏊</div>
+            <div class="entry-row-text">
+              <div class="entry-row-label">נקודת כניסה</div>${site.entry}
+            </div>
+          </div>
+          ${site.season ? `<div class="season-badge">📅 עונה: ${site.season}</div>` : ''}
+          ${site.notes ? `<div class="entry-row" style="margin-top:6px"><div class="entry-row-icon">⚠️</div><div class="entry-row-text"><div class="entry-row-label">הערות חשובות</div>${site.notes}</div></div>` : ''}
+          <div class="coords-text">📡 ${site.lat.toFixed(4)}°N, ${site.lng.toFixed(4)}°E</div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-spacer"></div>`;
+
+  document.getElementById('site-body').scrollTop = 0;
+  switchView('view-region', 'view-site');
+}
+
+function navigate(lat, lng) {
+  window.open(`https://www.google.com/maps?q=${lat},${lng}`, '_blank');
+}
+
+function goHome() { switchView('view-region', 'view-home', true); }
+function goRegion() { switchView('view-site', 'view-region', true); }
+
+function switchView(fromId, toId, back=false) {
+  const from = document.getElementById(fromId);
+  const to = document.getElementById(toId);
+  if (back) {
+    to.style.transition = 'none';
+    to.style.transform = 'translateX(-30%)';
+    to.classList.remove('active');
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      to.style.transition = '';
+      to.style.transform = '';
+      to.classList.add('active');
+    }));
+    from.classList.remove('active');
+  } else {
+    from.classList.add('behind');
+    from.classList.remove('active');
+    to.classList.add('active');
+    setTimeout(() => from.classList.remove('behind'), 350);
+  }
+}
+
+function toggleTheme() {
+  const root = document.documentElement;
+  root.setAttribute('data-theme', root.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
+}
+
+// PWA Install
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  showInstallBanner();
+});
+
+function showInstallBanner() {
+  if (document.getElementById('install-banner')) return;
+  const banner = document.createElement('div');
+  banner.id = 'install-banner';
+  banner.className = 'install-banner';
+  banner.innerHTML = `
+    <p>📲 <strong>התקן את האפליקציה</strong> לגישה מהירה מהמסך הראשי</p>
+    <button class="install-btn" onclick="installApp()">התקן</button>
+    <button class="install-close" onclick="this.parentElement.remove()">×</button>`;
+  document.body.appendChild(banner);
+}
+
+async function installApp() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  document.getElementById('install-banner')?.remove();
+}
+
+// Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
+}
+
+renderHome();
+</script>
+</body>
+</html>
